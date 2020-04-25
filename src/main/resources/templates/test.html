@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+    <title>免登效果样例</title>
+    <style type="text/css">
+        div {
+            margin: 10px auto;
+        }
+    </style>
+    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://g.alicdn.com/gdt/jsapi/1.2.1/index.js"></script>
+    <script src="https://g.alicdn.com/gdt/jsapi-adapter-dingtalk-pc/1.2.1/index.js"></script>
+    <script>
+        $(function () {
+            $("#show").html("显示authCode");
+            $("#user").html("显示userInfo");
+            $("#department").html("显示department");
+            $("#file").html("显示file");
+            $("#app").html("显示Geolocation");
+            $("#code").click(function () {
+                dd.ready(function () {
+                    dd.runtime.permission.requestAuthCode({
+//                        corpId: _config.corpId, // 企业id
+                        onSuccess: function (result) {
+                            console.log("info", result, "type", typeof result);
+//                            alert(JSON.stringify(result));
+                            $("#show").html(result.code);
+                        },
+                        onFail: function (err) {
+                            console.log("err", err);
+                            alert("err:" + JSON.stringify(err));
+                        }
+                    });
+//                    dd.getAuthCode({corpId: ""}).then((result) => {
+//                        if (result) {
+//                            console.log("info", result, "type", typeof result);
+////                            alert(JSON.stringify(result));
+//                            $("#show").html(result.code);
+//                        }
+//                    });
+                });
+            });
+//            $("#contact").click(function () {
+            $(document).on("click", ".contact", function () {
+                dd.ready(function () {
+                    alert("通讯录js-api测试");
+//                    dd.biz.microApp.openApp({
+//                        agentId: '123',
+//                        appId: '234',
+//                        corpId: '34748',
+//                        onSuccess: function (result) {
+//                            alert("result=" + result);
+//                        },
+//                        onFail: function (err) {
+//                            alert("error=" + err);
+//                        }
+//                    });
+//                    var corpid = "34748";
+//                    AlipayJSBridge.call("chooseContact", {
+//                        corpId: "34748",
+//                        mulitiple: true,
+//                        users: [],
+//                        max: 1000
+//                    }).then((result) => {
+//                        if (result) {
+//                            var info = JSON.stringify(result);
+//                            console.log("info", info);
+//                            alert("info", info, "type", typeof result);
+//                            $("#department").text(info);
+//                        }
+//                    });
+                    dd.chooseDepartments({
+                        corpId: "34748",
+                        mulitiple: false,
+                        title: "",
+                        limitTips: "",
+                        maxDepartments: 100,
+                        pickedDepartments: [],
+                        disabledDepartments: [],
+                        requiredDepartments: []
+                    }).then((result) => {
+                        console.log("result=" + result);
+                        if (result) {
+                            var info = JSON.stringify(result);
+                            console.log("info", info);
+//                            alert("info=" + info + ",type=" + typeof result);
+                            $("#department").text(info);
+                        }
+                    });
+                });
+            });
+            $("#info").click(function () {
+                var code = $("#show").text();
+                $.getJSON("http://119.3.12.87:8090/getUserInfo?code=" + code, function (result) {
+//                $.getJSON("http://30.11.141.94:8090/getUserInfo?code=" + code, function (result) {
+//                $.getJSON("http://192.168.31.123:8090/getUserInfo?code=" + code, function (result) {
+                    var info = JSON.stringify(result);
+                    console.log("info", info, "type", typeof result);
+//                    alert("userInfo:" + info);
+                    $("#user").text(info);
+                });
+            });
+            $("#upload").click(function () {
+                alert("文件上传js-api测试");
+                dd.biz.cspace.saveFile({
+                    corpId: "34748",
+                    url: "http://iotsztp.com/blt_static/开放平台文档20200120-v1.1.2.pdf",  // 文件在第三方服务器地址， 也可为通过服务端接口上传文件得到的media_id，详见参数说明
+                    name: "文件名",
+                    onSuccess: function (data) {
+                        var info = JSON.stringify(data);
+                        console.log("info", info, "type", typeof data);
+                        alert("data=" + info);
+                        $("#file").text(info);
+                        /* data结构
+                         {"data":
+                         [
+                         {
+                         "spaceId": "" //空间id
+                         "fileId": "", //文件id
+                         "fileName": "", //文件名
+                         "fileSize": 111111, //文件大小
+                         "fileType": "", //文件类型
+                         }
+                         ]
+                         }
+                         */
+                    },
+                    onFail: function (err) {
+                        console.log("err", err, "type", typeof err);
+                        alert("error=" + JSON.stringify(err));
+                    }
+                });
+            });
+            $("#open").click(function () {
+                alert("获取地理位置js-api测试");
+                dd.getGeolocation({
+                    targetAccuracy: 0,
+                    coordinate: 0,
+                    withReGeocode: false,
+                    useCache: true
+                }).then((result) => {
+                    if (result) {
+                        var info = JSON.stringify(result);
+                        console.log("info", info);
+                        alert("info=" + info + ",type=" + typeof result);
+                        $("#app").text(info);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Hello World!</h1>
+<input id="code" type="button" value="获取authorCode">
+<div id="show"></div>
+<input id="info" type="button" value="获取用户信息">
+<div id="user"></div>
+<input class="contact" type="button" value="选人和选部门">
+<div id="department"></div>
+<input id="upload" type="button" value="上传文件">
+<div id="file"></div>
+<input id="open" type="button" value="获取地理位置">
+<div id="app"></div>
+</body>
+</html>
