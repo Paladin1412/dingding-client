@@ -92,9 +92,9 @@
             });
             $("#info").click(function () {
                 var code = $("#show").text();
-                $.getJSON("http://119.3.12.87:8090/getUserInfo?code=" + code, function (result) {
+//                $.getJSON("http://119.3.12.87:8090/getUserInfo?code=" + code, function (result) {
 //                $.getJSON("http://30.11.141.94:8090/getUserInfo?code=" + code, function (result) {
-//                $.getJSON("http://192.168.31.123:8090/getUserInfo?code=" + code, function (result) {
+                $.getJSON("http://192.168.31.123:8090/getUserInfo?code=" + code, function (result) {
                     var info = JSON.stringify(result);
                     console.log("info", info, "type", typeof result);
 //                    alert("userInfo:" + info);

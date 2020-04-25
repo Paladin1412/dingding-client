@@ -34,10 +34,11 @@ public class MainClient {
 //        executableClient.setAccessKey("zzd-idaas-sync-VYT6pDI08nUbiam");
 //        executableClient.setSecretKey("ih44946C2uG0IL88B9X6RPvYqIru0QQQ399BR96u");//
 // 线上
-        executableClient.setAccessKey("personnel-20200424-c-wqmriQFjy");
-        executableClient.setSecretKey("37iX57657Y1X6Lkg23e63q661F2DuaXA3m59smmH");
-//        executableClient.setAccessKey("zzd-idaas-sync-VYT6pDI08nUbiam");
-//        executableClient.setSecretKey("ih44946C2uG0IL88B9X6RPvYqIru0QQQ399BR96u");
+//        executableClient.setAccessKey("personnel-20200424-c-wqmriQFjy");
+//        executableClient.setSecretKey("37iX57657Y1X6Lkg23e63q661F2DuaXA3m59smmH");
+//        政务外网
+        executableClient.setAccessKey("ZZJ-hzll-10002-N3y5665s67RZ36b");
+        executableClient.setSecretKey("h040Kjl5sL4xRPb63Ua7LU2p0QHXra1lGMW7E01D");
         //// 公有云测试
 //        executableClient.setAccessKey("remote-test-0P199w3mEouPVBBnae");
 //        executableClient.setSecretKey("7dc7k0fDMG0h0kJnl3r75S5Cbts4NxNk6M69GU63");
@@ -45,8 +46,9 @@ public class MainClient {
 //        executableClient.setSecretKey("P5H9O9w0kvldQ92Tufru65ZS9u75m81kjFC0pfF3");
 //        executableClient.setDomainName("openplatform-open.alibaba-inc.com");//公有云
 //        executableClient.setDomainName("openplatform-pro.ding.zj.gov.cn");//专有云
+        executableClient.setDomainName("oapi-dingtalk-pub-pro.ding.zj.gov.cn");//政务外网
 //        executableClient.setDomainName("openplatform.alibaba-inc.com");//saas
-        executableClient.setDomainName("openplatform.dg-work.cn");//线上
+//        executableClient.setDomainName("openplatform.dg-work.cn");//线上
         executableClient.setProtocal("https");
         executableClient.init();
     }
@@ -67,7 +69,7 @@ public class MainClient {
         String[] ecodes = new String[]{employeeCode, employeeCodes};
         String[] ocodes = new String[]{organizationCode, organizationCodes, yhOrganizationCode, yhCompanyOrgCode};
 //        getAuthCode();
-        getAccessToken();
+//        getAccessToken();
 //        getJsapiTicket();
 //        workNotification(tenantId, recevingIds);
 //        register_event_callback();
@@ -90,6 +92,7 @@ public class MainClient {
 //        logger.warn("accessToken=" + getAccessToken());
 //        getAuthCode();
 //        logger.warn("userInfo=" + getUserInfo("1396025323e946668842f5639b490e00b50dda01"));
+        logger.warn("userId{}", getUserId("eb788bc9fb77457bbb4352795bbf0100b50c0c01"));
 //        getAccountSensitiveDataByAccount();
     }
 
@@ -141,6 +144,7 @@ public class MainClient {
         try {
             //executableClient要单例，并且使用前要初始化，只需要初始化一次
             String api = "/rpc/oauth2/dingtalk_app_user.json";
+//            String api = "/user/getuserinfo";
 //            String api = "/user/get";
             PostClient postClient = executableClient.newPostClient(api);
             //设置参数
@@ -159,14 +163,42 @@ public class MainClient {
         }
     }
 
+    public static String getUserId(String code) {
+        String str = "";
+        try {
+            //executableClient要单例，并且使用前要初始化，只需要初始化一次
+//            String api = "/rpc/oauth2/dingtalk_app_user.json";
+            String api = "/user/getuserinfo";
+//            String api = "/user/get";
+            GetClient getClient = executableClient.newGetClient(api);
+            //设置参数
+            getClient.addParameter("access_token", getAccessToken());
+            getClient.addParameter("type", "zwdd");
+            if (StringUtils.isNotBlank(code)) {
+                getClient.addParameter("auth_code", code);
+            } else {
+                getClient.addParameter("auth_code", getAuthCode());
+            }
+            //调用API
+            String apiResult = getClient.get();
+            return apiResult;
+        } catch (Exception e) {
+            logger.warn("error:" + e.getMessage());
+            return str;
+        }
+    }
+
     public static String getAccessToken() {
         //executableClient要单例，并且使用前要初始化，只需要初始化一次
-        String api = "/gettoken.json";
+        String api = "/gettoken";
 //        String api = "/rpc/oauth2/dingtalk_app_token.json";
         GetClient getClient = executableClient.newGetClient(api);
         //设置参数
-        getClient.addParameter("appkey", "personnel-20200424-c-wqmriQFjy");
-        getClient.addParameter("appsecret", "37iX57657Y1X6Lkg23e63q661F2DuaXA3m59smmH");
+//        getClient.addParameter("appkey", "personnel-20200424-c-wqmriQFjy");
+//        getClient.addParameter("appsecret", "37iX57657Y1X6Lkg23e63q661F2DuaXA3m59smmH");
+        getClient.addParameter("appkey", "ZZJ-hzll-10002-N3y5665s67RZ36b");
+        getClient.addParameter("appsecret", "h040Kjl5sL4xRPb63Ua7LU2p0QHXra1lGMW7E01D");
+
         //调用API
         String apiResult = getClient.get();
         logger.warn("getAccessToken{}", apiResult);

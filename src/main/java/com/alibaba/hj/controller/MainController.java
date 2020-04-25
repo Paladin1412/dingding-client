@@ -23,7 +23,7 @@ public class MainController {
     public String showUser(String code) {
         logger.warn("/getUserInfo?auth_code=" + code);
         String info = MainClient.getUserInfo(code);
-        logger.warn("info=" + info);
+        logger.warn("userInfo{}", info);
         return info;
     }
 }
